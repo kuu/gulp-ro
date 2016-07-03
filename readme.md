@@ -1,7 +1,8 @@
 # gulp-ro
 A video editing tool built on top of the Gulp ecosystem
+[![Build Status](https://travis-ci.org/kuu/gulp-ro.svg?branch=master)](http://travis-ci.org/kuu/gulp-ro)
 
-## Example
+## Usage
 ```js
 import gulp from 'gulp';
 import {start, end} from 'gulp-ro';
@@ -9,6 +10,7 @@ import merge from 'gulp-ro-merge';
 import drop from 'gulp-ro-drop';
 import shift from 'gulp-ro-shift';
 import slice from 'gulp-ro-slice';
+import rename from 'gulp-rename';
 
 // Merges video files into a single file and applies some changes to it
 gulp.src('./input/*.mp4')
@@ -81,3 +83,11 @@ $ cat file.webm | ro slice 10 50 > output.webm
    i.e. cuts off the first 10 seconds and the last 10 seconds
    (supposing the original duration was 60 seconds.)
 ```
+
+## Development
+
+### Principles
+
+* `ro` is a set of plugins overlaid on top of the gulp plugins
+* There's no difference between `ro` plugins and gulp plugins except that the content of `ro` plugin is a stream of [`KontainerElement`](https://www.npmjs.com/package/kontainer-js) object
+* ro plugins are distinguished by the name; gulp-ro-xxx, xxx should express a unique editing operation
