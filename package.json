@@ -1,0 +1,37 @@
+{
+  "name": "@kuu/gulp-ro",
+  "version": "0.0.1",
+  "description": "A video editing tool built on top of the Gulp ecosystem",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kuu/gulp-ro.git"
+  },
+  "keywords": [
+    "gulpplugin"
+  ],
+  "author": "Kuu Miyazaki",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kuu/gulp-ro/issues"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "dependencies": {
+    "gulp-util": "^3.0.7",
+    "kontainer-js": "^2.2.0",
+    "through2": "^2.0.1"
+  },
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "xo": "^0.14.0"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "xo": {
+    "esnext": true,
+    "space": true
+  }
+}
