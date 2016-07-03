@@ -88,6 +88,6 @@ $ cat file.webm | ro slice 10 50 > output.webm
 
 ### Principles
 
-* `ro` is a set of plugins overlaid on top of the gulp plugins
+* `ro` is a set of plugins overlaid on top of the gulp plugins (plugins between `start()` and `end()` are `ro` plugins)
 * There's no difference between `ro` plugins and gulp plugins except that the content of `ro` plugin is a stream of [`KontainerElement`](https://www.npmjs.com/package/kontainer-js) object
-* ro plugins are distinguished by the name; gulp-ro-xxx, xxx should express a unique editing operation
+* ro plugins should be distinguished by the name; gulp-ro-xxx, where xxx should express a unique editing operation
