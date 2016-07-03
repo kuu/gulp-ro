@@ -43,7 +43,7 @@ test.cb('start', t => {
 
 test.cb('end', t => {
   const testContentsDir = __dirname;
-  const testContentsPathMP4 = path.join(__dirname, 'test-a-only.mp4');
+  const testContentsPathMP4 = path.join(__dirname, 'test.mp4');
   const renderer = end();
   let buffer = null;
 
