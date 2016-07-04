@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
-import stream from 'stream';
 import test from 'ava';
 import util from 'gulp-util';
+import through from 'through2';
 import Kontainer from 'kontainer-js';
 import {start, end} from './';
 
@@ -14,14 +14,14 @@ test.cb('start', t => {
   let trakCount = 0;
   let mdatCount = 0;
 
-  stream.on('trak', elem => {
-    if (elem) {
-      trakCount++;
+  stream.on('data', elem => {
+    if (!elem) {
+      return;
     }
-  });
-
-  stream.on('mdat', elem => {
-    if (elem) {
+    // console.log(elem.type.COMPACT_NAME);
+    if (elem.type.COMPACT_NAME === 'trak') {
+      trakCount++;
+    } else if (elem.type.COMPACT_NAME === 'mdat') {
       mdatCount++;
     }
   });
@@ -44,7 +44,7 @@ test.cb('start', t => {
 test.cb('end', t => {
   const testContentsDir = __dirname;
   const testContentsPathMP4 = path.join(__dirname, 'test.mp4');
-  const renderer = end();
+  const stream = end();
   let buffer = null;
 
   fs.readFile(testContentsPathMP4, (err, buf) => {
@@ -53,18 +53,18 @@ test.cb('end', t => {
       return;
     }
 
-    const input = new stream.PassThrough({objectMode: true});
+    const input = through.obj();
     input.end(Kontainer.createElementFromBuffer(buf));
 
-    renderer.write(new util.File({
+    stream.write(new util.File({
       base: testContentsDir,
       path: testContentsPathMP4,
       contents: input
     }));
-    renderer.end();
+    stream.end();
   });
 
-  renderer.on('data', file => {
+  stream.on('data', file => {
     const chunk = file.contents;
     if (util.isBuffer(chunk)) {
       if (buffer) {
@@ -75,7 +75,7 @@ test.cb('end', t => {
     }
   });
 
-  renderer.on('finish', () => {
+  stream.on('finish', () => {
     t.is(util.isBuffer(buffer), true);
     t.end();
   });

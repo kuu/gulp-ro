@@ -15,23 +15,23 @@ function start(opts = {}) {
       return;
     }
 
-    const inputStream = file.contents;
-
     try {
-      const streamer = Kontainer.createObjectStream((type, elem) => {
-        this.emit(type, elem);
+      const streamer = Kontainer.createObjectStream((_, elem) => {
+        this.push(elem);
       })
       .once('format', this.emit.bind(this, 'format'))
+      .once('finish', () => {
+        this.emit('end');
+        cb();
+      })
       .once('error', this.emit.bind(this, 'error'));
 
-      inputStream.once('end', this.emit.bind(this, 'end'));
-
-      file.contents = inputStream.pipe(streamer);
+      file.contents = file.contents.pipe(streamer);
     } catch (err) {
       this.emit('error', new util.PluginError('gulp-ro', err));
     }
 
-    cb();
+    // cb();
   });
 }
 
