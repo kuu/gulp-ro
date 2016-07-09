@@ -20,11 +20,12 @@
   },
   "dependencies": {
     "gulp-util": "^3.0.7",
-    "kontainer-js": "^2.2.0",
+    "kontainer-js": "^2.3.0",
     "through2": "^2.0.1"
   },
   "devDependencies": {
     "ava": "^0.14.0",
+    "gulp": "^3.9.1",
     "xo": "^0.14.0"
   },
   "engines": {

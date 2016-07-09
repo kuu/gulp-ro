@@ -2,62 +2,64 @@ const util = require('gulp-util');
 const through = require('through2');
 const Kontainer = require('kontainer-js').default;
 
-function start(opts = {}) {
-  console.log(opts);
+function start(/* opts = {} */) {
   return through.obj(function (file, enc, cb) {
+    // console.log(`start: Received a vynil. path = ${file.path}`);
     if (file.isNull()) {
       cb(null, file);
-      return;
-    }
-
-    if (file.isBuffer()) {
-      cb(new util.PluginError('gulp-ro', 'Buffer not supported'));
-      return;
-    }
-
-    try {
-      const streamer = Kontainer.createObjectStream((_, elem) => {
-        this.push(elem);
-      })
-      .once('format', this.emit.bind(this, 'format'))
-      .once('finish', () => {
-        this.emit('end');
-        cb();
+    } else if (file.isBuffer()) {
+      cb(new util.PluginError('gulp-ro', 'Buffer is not supported'));
+    } else {
+      const elements = [];
+      const inputStream = file.contents;
+      const outputStream = Kontainer.createObjectStream((type, element, depth) => {
+        // console.log(`start: writting ${type}`);
+        outputStream.emit('ro-data', {type, element, depth});
+        if (depth === 0) {
+          elements.push(element);
+        }
       })
       .once('error', this.emit.bind(this, 'error'));
 
-      file.contents = file.contents.pipe(streamer);
-    } catch (err) {
-      this.emit('error', new util.PluginError('gulp-ro', err));
-    }
+      inputStream.once('end', () => {
+        // console.log(`start: Consumed all data. elements.length = ${elements.length}`);
+        if (elements.length > 0) {
+          outputStream.push(elements[0].wrap(elements));
+        }
+        cb();
+      });
 
-    // cb();
+      file.contents = inputStream.pipe(outputStream);
+      this.push(file);
+    }
   });
 }
 
-function end(opts = {}) {
-  console.log(opts);
+function end(/* opts = {} */) {
   return through.obj(function (file, enc, cb) {
+    // console.log(`end: Received a vynil. path = ${file.path}`);
     if (file.isNull()) {
       cb(null, file);
-      return;
-    }
+    } else if (file.isBuffer()) {
+      cb(new util.PluginError('gulp-ro', 'Buffer is not supported'));
+    } else {
+      const inputStream = file.contents;
+      const outputStream = through.obj();
 
-    if (file.isBuffer()) {
-      cb(new util.PluginError('gulp-ro', 'Buffer not supported'));
-      return;
-    }
+      inputStream.once('data', rootElement => {
+        // console.log(`end: Writing rootElement`);
+        outputStream.push(Kontainer.render(rootElement));
+      })
+      .once('end', () => {
+        // console.log(`end: Consumed all data.`);
+        cb();
+      });
 
-    file.contents.once('finish', () => {
-      try {
-        const element = file.contents.read();
-        file.contents = Kontainer.render(element);
-        this.push(file);
-      } catch (err) {
-        this.emit('error', new util.PluginError('gulp-ro', err));
-      }
-      cb();
-    });
+      outputStream.once('error', this.emit.bind(this, 'error'));
+
+      file.contents = inputStream.pipe(outputStream);
+      this.push(file);
+    }
   });
 }
 

@@ -13,9 +13,9 @@ import slice from 'gulp-ro-slice';
 import rename from 'gulp-rename';
 
 // Merges video files into a single file and applies some changes to it
-gulp.src('./input/*.mp4')
+gulp.src('./input/*.mp4', {buffer: false})
 .pipe(start())
-.pipe(merge()) // Combines tracks accross multiple files
+.pipe(merge()) // Combines tracks across multiple files
 .pipe(drop(999)) // Removes track with the specific track-id
 .pipe(shift(888, -10)) // Move the position of the track 10 seconds backwards
 .pipe(slice(10, 50)) // Trims the first 10 seconds and the last 10 seconds
@@ -41,7 +41,7 @@ A transform stream
 
 ---
 #### `end(options)`
-Creates a transform stream that converts a vinyl of `KontainerElement` object stream into a vinyl of buffer stream
+Creates a transform stream that converts a vinyl of `KontainerElement` object stream into a vinyl of buffer
 
 ##### params
 | name | type | description |
