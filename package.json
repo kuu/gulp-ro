@@ -1,6 +1,6 @@
 {
   "name": "@kuu/gulp-ro",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A video editing tool built on top of the Gulp ecosystem",
   "repository": {
     "type": "git",
