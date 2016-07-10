@@ -18,7 +18,7 @@ function start(/* opts = {} */) {
         if (depth === 0) {
           elements.push(element);
         }
-      })
+      }, {ignoreUnknown: true})
       .once('error', this.emit.bind(this, 'error'));
 
       inputStream.once('end', () => {
